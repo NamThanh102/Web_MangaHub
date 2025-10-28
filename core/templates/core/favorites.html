@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Truyện Yêu Thích - MangaHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <h1 style="font-size: 32px; margin-bottom: 30px; color: #ff6b6b; border-left: 5px solid #ff6b6b; padding-left: 15px;">
+        Truyện yêu thích của bạn
+    </h1>
+    
+    {% if favorites %}
+        <div class="comics-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px;">
+            {% for favorite in favorites %}
+                <div class="comic-card" style="
+                    background: #1a1a1a;
+                    border-radius: 10px;
+                    overflow: hidden;
+                    transition: all 0.3s;
+                    cursor: pointer;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                    position: relative;
+                " 
+                onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 15px 30px rgba(0, 0, 0, 0.4)'" 
+                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 5px 15px rgba(0, 0, 0, 0.2)'">
+                    <a href="{% url 'comic_detail' favorite.comic.id %}">
+                        <div class="comic-cover" style="
+                            width: 100%;
+                            height: 280px;
+                            position: relative;
+                        ">
+                            {% if favorite.comic.cover_image %}
+                                <img src="{{ favorite.comic.cover_image.url }}" alt="{{ favorite.comic.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #ff6b6b, #4ecdc4); display: flex; align-items: center; justify-content: center; color: white;">
+                                    {{ favorite.comic.title|slice:":2" }}
+                                </div>
+                            {% endif %}
+                            
+                            <div style="position: absolute; top: 10px; left: 10px; background: rgba(255, 107, 107, 0.9); color: white; padding: 3px 8px; border-radius: 3px; font-size: 12px;">
+                                ❤️
+                            </div>
+                        </div>
+                        <div class="comic-info" style="padding: 15px;">
+                            <div class="comic-title" style="
+                                font-size: 16px;
+                                font-weight: bold;
+                                margin-bottom: 5px;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            ">{{ favorite.comic.title }}</div>
+                            <div class="comic-meta" style="display: flex; justify-content: space-between; color: #aaa; font-size: 14px;">
+                                <span>
+                                    {% if favorite.comic.chapters.last %}
+                                        Ch. {{ favorite.comic.chapters.last.chapter_number }}
+                                    {% else %}
+                                        Chưa có chương
+                                    {% endif %}
+                                </span>
+                                <span>{{ favorite.comic.views }} lượt</span>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <div class="favorite-actions" style="padding: 0 15px 15px 15px;">
+                        <a href="{% url 'toggle_favorite' favorite.comic.id %}" 
+                                style="
+                                    width: 100%;
+                                    background: #f44336;
+                                    border: none;
+                                    color: white;
+                                    padding: 8px;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    transition: all 0.3s;
+                                    font-size: 14px;
+                                " 
+                                onmouseover="this.style.background='#d32f2f'" 
+                                onmouseout="this.style.background='#f44336'">
+                            ❌ Bỏ yêu thích
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px; color: #aaa;">
+            <h3>Chưa có truyện yêu thích</h3>
+            <p>Hãy thêm truyện vào danh sách yêu thích để dễ dàng theo dõi!</p>
+            <a href="{% url 'comic_list' %}" 
+                    style="
+                        background: #ff6b6b;
+                        border: none;
+                        color: white;
+                        padding: 12px 25px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-top: 20px;
+                        font-weight: bold;
+                    ">
+                Khám phá truyện ngay
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

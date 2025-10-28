@@ -1,0 +1,214 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ chapter.comic.title }} - Chapter {{ chapter.chapter_number }}{% endblock %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/read_chapter.css' %}">
+{% block content %}
+<div class="chapter-container">
+    <!-- Header -->
+    <div class="chapter-header">
+        <h1>{{ chapter.comic.title }}</h1>
+        <h2>Chapter {{ chapter.chapter_number }}{% if chapter.title %} - {{ chapter.title }}{% endif %}</h2>
+        
+        <div class="chapter-meta">
+            <span>Lượt xem: {{ chapter.views }}</span>
+            <span>Ngày đăng: {{ chapter.created_at|date:"d/m/Y" }}</span>
+            <span>Số trang: {{ pages.count }}</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="chapter-navigation">
+        {% if prev_chapter %}
+            <a href="{% url 'read_chapter' prev_chapter.id %}" class="nav-btn prev-btn">
+                ← Chương {{ prev_chapter.chapter_number }}
+            </a>
+        {% else %}
+            <span class="nav-btn disabled">← Chương trước</span>
+        {% endif %}
+        
+        <a href="{% url 'comic_detail' chapter.comic.id %}" class="nav-btn back-btn">
+            📚 Danh sách chương
+        </a>
+        
+        {% if next_chapter %}
+            <a href="{% url 'read_chapter' next_chapter.id %}" class="nav-btn next-btn">
+                Chương {{ next_chapter.chapter_number }} →
+            </a>
+        {% else %}
+            <span class="nav-btn disabled">Chương sau →</span>
+        {% endif %}
+    </div>
+
+    <!-- Chapter Content - Hiển thị các trang ảnh -->
+    <div class="chapter-content">
+        {% if pages %}
+            <div class="images-content">
+                {% for page in pages %}
+                    <div class="chapter-page">
+                        <!-- <div class="page-header">
+                            <span>Trang {{ page.page_number }}</span>
+                        </div> -->
+                        <div class="page-image">
+                            <img src="{{ page.image.url }}" 
+                                 alt="{{ chapter.comic.title }} - Chapter {{ chapter.chapter_number }} - Trang {{ page.page_number }}"
+                                 loading="lazy">
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-content">
+                <p>Chương này chưa có nội dung.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Navigation Bottom -->
+    <div class="chapter-navigation bottom">
+        {% if prev_chapter %}
+            <a href="{% url 'read_chapter' prev_chapter.id %}" class="nav-btn prev-btn">
+                ← Chương {{ prev_chapter.chapter_number }}
+            </a>
+        {% else %}
+            <span class="nav-btn disabled">← Chương trước</span>
+        {% endif %}
+        
+        <a href="{% url 'comic_detail' chapter.comic.id %}" class="nav-btn back-btn">
+            📚 Danh sách chương
+        </a>
+        
+        {% if next_chapter %}
+            <a href="{% url 'read_chapter' next_chapter.id %}" class="nav-btn next-btn">
+                Chương {{ next_chapter.chapter_number }} →
+            </a>
+        {% else %}
+            <span class="nav-btn disabled">Chương sau →</span>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .chapter-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .chapter-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .chapter-header h1 {
+        margin: 0 0 10px 0;
+        color: #292f3d;
+        font-size: 28px;
+    }
+
+    .chapter-header h2 {
+        margin: 0 0 15px 0;
+        color: #666;
+        font-size: 20px;
+        font-weight: normal;
+    }
+
+    .chapter-meta {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        color: #8a8f9d;
+        font-size: 14px;
+    }
+
+    .chapter-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 15px 0;
+        border-bottom: 1px solid #eaeaea;
+    }
+
+    .chapter-navigation.bottom {
+        border-bottom: none;
+        border-top: 1px solid #eaeaea;
+        margin-top: 30px;
+        margin-bottom: 0;
+    }
+
+    .nav-btn {
+        padding: 10px 20px;
+        background: #4ecdc4;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-weight: 600;
+        transition: background 0.3s ease;
+    }
+    .nav-btn:hover {
+        background: #3dbeb6;
+    }
+    .nav-btn.disabled {
+        background: #eaeaea;
+        color: #8a8f9d;
+        cursor: not-allowed;
+    }
+    .back-btn {
+        background: #6c757d;
+    }
+    .back-btn:hover {
+        background: #5a6268;
+    }
+    .chapter-content {
+        min-height: 500px;
+    }
+    .images-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+    .chapter-page {
+        width: 100%;
+        text-align: center;
+    }
+    .page-header {
+        margin-bottom: 10px;
+        color: #8a8f9d;
+        font-size: 14px;
+    }
+    .page-image {
+        max-width: 100%;
+    }
+    .page-image img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .no-content {
+        text-align: center;
+        color: #8a8f9d;
+        font-size: 18px;
+        padding: 60px 20px;
+    }
+    @media (max-width: 768px) {
+        .chapter-navigation {
+            flex-direction: column;
+            gap: 10px;
+        }    
+        .nav-btn {
+            width: 100%;
+            text-align: center;
+        }
+        .chapter-meta {
+            flex-direction: column;
+            gap: 5px;
+        }
+    }
+</style>
+{% endblock %}

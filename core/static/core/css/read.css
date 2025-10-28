@@ -1,0 +1,252 @@
+.container {
+    display: flex;
+    max-width: 1400px;
+    margin: 20px auto;
+    gap: 20px;
+    padding: 0 20px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px;
+    height: fit-content;
+    position: sticky;
+    top: 80px;
+}
+
+.comic-info {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 15px;
+}
+
+.comic-cover {
+    width: 150px;
+    height: 200px;
+    border-radius: 5px;
+    margin: 0 auto 15px;
+    overflow: hidden;
+}
+
+.comic-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cover-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.comic-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.comic-author {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.chapter-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.chapter-list h3 {
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.chapter-item {
+    padding: 10px;
+    border-bottom: 1px solid #2a2a2a;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.chapter-item:hover {
+    background: #2a2a2a;
+}
+
+.chapter-item.active {
+    background: #ff6b6b;
+    color: white;
+}
+
+/* Reader */
+.reader {
+    flex: 1;
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.reader-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #333;
+}
+
+.chapter-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.reader-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.reader-controls button {
+    border: none;
+    color: #f0f0f0;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.reading-mode {
+    background: #2a2a2a;
+}
+
+.reading-mode.active {
+    background: #ff6b6b;
+}
+
+.reading-mode:hover {
+    background: #ff6b6b;
+}
+
+#fullscreen-btn {
+    background: #2a2a2a;
+}
+
+#fullscreen-btn:hover {
+    background: #ff6b6b;
+}
+
+.favorite-btn {
+    background: #2a2a2a;
+}
+
+.favorite-btn[data-favorite="true"] {
+    background: #ff6b6b;
+}
+
+.favorite-btn:hover {
+    background: #ff6b6b;
+}
+
+.page-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    min-height: 600px;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.comic-page {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.page-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.nav-button {
+    background: #ff6b6b;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.nav-button:hover {
+    background: #ff5252;
+}
+
+.page-info {
+    color: #aaa;
+}
+
+/* Horizontal reading mode */
+.page-container.horizontal {
+    flex-direction: row;
+    overflow-x: auto;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.page-container.horizontal .comic-page {
+    max-width: none;
+    max-height: 90vh;
+    flex-shrink: 0;
+}
+
+/* Fullscreen styles */
+.page-container:fullscreen {
+    background: #000;
+    padding: 20px;
+}
+
+.page-container:fullscreen .comic-page {
+    max-height: 95vh;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        width: 100%;
+        position: static;
+    }
+    
+    .reader-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+    
+    .reader-controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

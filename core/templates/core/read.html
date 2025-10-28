@@ -1,0 +1,76 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Đọc {{ chapter.comic.title }} - {{ chapter.title }}{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/css/read.css' %}">
+
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="comic-info">
+            <div class="comic-cover">
+                {% if chapter.comic.cover_image %}
+                    <img src="{{ chapter.comic.cover_image.url }}" alt="{{ chapter.comic.title }}">
+                {% else %}
+                    <div class="cover-placeholder">{{ chapter.comic.title|slice:":2" }}</div>
+                {% endif %}
+            </div>
+            <div class="comic-title">{{ chapter.comic.title }}</div>
+            <div class="comic-author">Tác giả: {{ chapter.comic.author }}</div>
+        </div>
+        <div class="chapter-list">
+            <h3>Danh sách chương</h3>
+            {% for chap in chapter.comic.chapters.all %}
+            <a href="{% url 'read_chapter' chap.id %}"
+                class="chapter-item {% if chap.id == chapter.id %}active{% endif %}">
+                Chương {{ chap.chapter_number }}: {{ chap.title }}
+            </a>
+            {% endfor %}
+        </div>
+    </aside>
+
+    <!-- Reader -->
+    <main class="reader">
+        <div class="reader-header">
+            <div class="chapter-title">{{ chapter.title }}</div>
+            <div class="reader-controls">
+                <button class="reading-mode active" data-mode="vertical">Dọc</button>
+                <button class="reading-mode" data-mode="horizontal">Ngang</button>
+                <button id="fullscreen-btn">Toàn màn hình</button>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'toggle_favorite' comic.id %}" 
+                        class="favorite-btn" 
+                         data-favorite="{{ is_favorite|yesno:'true,false' }}">
+                         ♥
+                    </a>
+
+                {% endif %}
+            </div>
+        </div>
+        <div class="page-container">
+            {% for page in pages %}
+                <img src="{{ page.image.url }}" alt="Trang {{ page.page_number }}" class="comic-page">
+            {% endfor %}
+        </div>
+        <div class="page-navigation">
+            {% if prev_chapter %}
+                <a href="{% url 'read_chapter' prev_chapter.id %}" class="nav-button prev">Chương trước</a>
+            {% else %}
+                <div></div>
+            {% endif %}
+            
+            <div class="page-info">Chương {{ chapter.chapter_number }}</div>
+            
+            {% if next_chapter %}
+                <a href="{% url 'read_chapter' next_chapter.id %}" class="nav-button next">Chương tiếp</a>
+            {% else %}
+                <div></div>
+            {% endif %}
+        </div>
+    </main>
+</div>
+
+<script src="{% static 'core/js/read.js' %}"></script>
+{% endblock %}

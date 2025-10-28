@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Truyện tranh{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+
+    <style>
+        /* Ảnh nền chính cho toàn bộ trang */
+        body {
+            background-color: #121212;
+            color: #f0f0f0;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Lớp phủ tối để nội dung dễ đọc */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, 
+                rgba(18, 18, 18, 0.8) 0%, 
+                rgba(26, 26, 26, 0.7) 50%, 
+                rgba(18, 18, 18, 0.8) 100%);
+            z-index: -1;
+        }
+
+        /* Ảnh nền */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('{% static "core/images/a3.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+            opacity: 0.5;
+            filter: brightness(0.7);
+        }
+
+        /* Đảm bảo nội dung chính hiển thị rõ ràng */
+        main {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cải thiện header với background bán trong suốt */
+        header {
+            background-color: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        /* Cải thiện footer */
+        footer {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 107, 107, 0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tìm kiếm với nút bên phải */
+        .search-bar {
+            display: flex;
+            background: #2a2a2a;
+            border-radius: 30px;
+            overflow: hidden;
+            width: 300px;
+            border: 1px solid #444;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus-within {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+        }
+
+        .search-bar form {
+            display: flex;
+            width: 100%;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 20px;
+            color: #f0f0f0;
+            outline: none;
+        }
+
+        .search-bar button {
+            background: #ff6b6b;
+            border: none;
+            padding: 12px 20px;
+            color: white;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 50px;
+        }
+
+        .search-bar button:hover {
+            background: #ff5252;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-bar {
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header content giữ nguyên -->
+    <header>
+        <a href="{% url 'home' %}" class="logo">
+            <img src="{% static 'core/images/a1.jpg' %}" class="logo_img" alt="MangaHub"/>
+            <span class="logo-text">MangaHub</span>
+        </a>
+        
+        <div class="nav-container">
+            <div class="nav-links">
+                <a href="{% url 'home' %}"><i class="fas fa-home"></i> Trang chủ</a>
+                <a href="{% url 'comic_list' %}"><i class="fas fa-book"></i> Truyện tranh</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'favorites' %}"><i class="fas fa-heart"></i> Yêu thích</a>
+                    <a href="{% url 'reading_history' %}"><i class="fas fa-history"></i> Lịch sử</a>
+                    {% if user.is_staff %}
+                        <a href="/admin/"><i class="fas fa-cog"></i> Quản lý</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+            
+            <!-- Search bar với nút bên phải -->
+            <div class="search-bar">
+                <form method="GET" action="{% url 'comic_list' %}">
+                    <input type="text" name="search" placeholder="Tìm kiếm truyện...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="user-actions">
+            {% if user.is_authenticated %}
+                <div class="user-info">
+                    <span class="welcome-text">Xin chào, <strong>{{ user.username }}</strong></span>
+                    <a href="{% url 'about' %}" class="btn"><i class="fas fa-info-circle"></i></a>
+                    <a href="{% url 'profile' %}" class="btn"><i class="fas fa-user"></i></a>
+                    <form method="post" action="{% url 'logout' %}" class="logout-form">
+                        {% csrf_token %}
+                        <button type="submit" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="auth-buttons">
+                    <a href="{% url 'login_view' %}" class="login-btn"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
+                    <a href="{% url 'register' %}" class="register-btn"><i class="fas fa-user-plus"></i> Đăng ký</a>
+                </div>
+            {% endif %}
+        </div>
+        
+        <button class="mobile-menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                    {{ message }}
+                    <button class="close-message"><i class="fas fa-times"></i></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3><i class="fas fa-book-open"></i> MangaHub</h3>
+                <p>Trang web đọc truyện tranh trực tuyến hàng đầu Việt Nam với hàng ngàn bộ truyện đa dạng thể loại.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Liên kết</h3>
+                <ul class="footer-links">
+                    <li><a href="{% url 'home' %}"><i class="fas fa-chevron-right"></i> Trang chủ</a></li>
+                    <li><a href="{% url 'comic_list' %}"><i class="fas fa-chevron-right"></i> Truyện tranh</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Thể loại</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Truyện mới</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Hỗ trợ</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Điều khoản sử dụng</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Chính sách bảo mật</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Hướng dẫn sử dụng</a></li>
+                    <li><a href="#"><i class="fas fa-chevron-right"></i> Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Thông báo</h3>
+                <p>Đăng ký để nhận thông báo khi có truyện mới:</p>
+                <div class="newsletter">
+                    <input type="email" placeholder="Email của bạn">
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2023 MangaHub. Tất cả quyền được bảo lưu.
+        </div>
+    </footer>
+
+    <script src="{% static 'core/js/base.js' %}"></script>
+    
+    <!-- JavaScript để xử lý ảnh nền -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Kiểm tra xem ảnh nền có tồn tại không, nếu không thì sử dụng ảnh mặc định
+            const backgroundImage = new Image();
+            backgroundImage.src = "{% static 'core/images/background.jpg' %}";
+            
+            backgroundImage.onerror = function() {
+                // Nếu ảnh không tồn tại, sử dụng gradient thay thế
+                document.body.style.background = "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)";
+                document.body.style.backgroundAttachment = "fixed";
+            };
+            
+            // Xử lý nút đóng message
+            const closeButtons = document.querySelectorAll('.close-message');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const message = this.closest('.alert');
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateY(-10px)';
+                    setTimeout(() => {
+                        message.remove();
+                    }, 300);
+                });
+            });
+            
+            // Mobile menu toggle
+            const mobileToggle = document.querySelector('.mobile-menu-toggle');
+            const navContainer = document.querySelector('.nav-container');
+            
+            if (mobileToggle && navContainer) {
+                mobileToggle.addEventListener('click', function() {
+                    navContainer.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+    
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,95 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Lịch sử Đọc - MangaHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 0 20px;">
+    <h1 style="font-size: 32px; margin-bottom: 30px; color: #ff6b6b; border-left: 5px solid #ff6b6b; padding-left: 15px;">
+        Lịch sử đọc của bạn
+    </h1>
+    
+    {% if history %}
+        <div class="history-list" style="background: #1a1a1a; border-radius: 10px; overflow: hidden;">
+            {% for item in history %}
+                <div class="history-item" style="
+                    padding: 15px 20px;
+                    border-bottom: 1px solid #2a2a2a;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    transition: all 0.3s;
+                " 
+                onmouseover="this.style.background='#2a2a2a'" 
+                onmouseout="this.style.background='transparent'">
+                    <div class="history-info" style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div class="comic-cover" style="
+                                width: 60px;
+                                height: 80px;
+                                border-radius: 5px;
+                                overflow: hidden;
+                                flex-shrink: 0;
+                            ">
+                                {% if item.comic.cover_image %}
+                                    <img src="{{ item.comic.cover_image.url }}" alt="{{ item.comic.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                {% else %}
+                                    <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #ff6b6b, #4ecdc4);"></div>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 5px; font-size: 18px;">
+                                    <a href="{% url 'comic_detail' item.comic.id %}" style="color: #ff6b6b; text-decoration: none;">
+                                        {{ item.comic.title }}
+                                    </a>
+                                </div>
+                                <div style="color: #4ecdc4; margin-bottom: 5px;">
+                                    {{ item.chapter.title }}
+                                </div>
+                                <div style="color: #aaa; font-size: 14px;">
+                                    Đọc lúc: {{ item.read_at|date:"d/m/Y H:i" }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="history-actions">
+                        <a href="{% url 'read_chapter' item.chapter.id %}" 
+                                style="
+                                    background: #ff6b6b;
+                                    border: none;
+                                    color: white;
+                                    padding: 8px 15px;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    transition: all 0.3s;
+                                " 
+                                onmouseover="this.style.background='#ff5252'" 
+                                onmouseout="this.style.background='#ff6b6b'">
+                            Đọc tiếp
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px; color: #aaa;">
+            <h3>Chưa có lịch sử đọc</h3>
+            <p>Hãy bắt đầu đọc truyện để xem lịch sử tại đây!</p>
+            <a href="{% url 'comic_list' %}" 
+                    style="
+                        background: #ff6b6b;
+                        border: none;
+                        color: white;
+                        padding: 12px 25px;
+                        border-radius: 5px;
+                        cursor: pointer;
+                        margin-top: 20px;
+                        font-weight: bold;
+                    ">
+                Khám phá truyện ngay
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

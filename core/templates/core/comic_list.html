@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}Danh sách Truyện - MangaHub{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/css/comic_list.css' %}">
+
+<div class="container">
+    <!-- Filter Section -->
+    <div class="filter-section">
+        <h2>
+            {% if search_query %}Kết quả tìm kiếm: "{{ search_query }}"{% else %}Tất cả truyện tranh{% endif %}
+        </h2>
+        
+        <div class="filters">
+            <div class="category-filter">
+                <select onchange="location = this.value;">
+                    <option value="{% url 'comic_list' %}" {% if not selected_category %}selected{% endif %}> Tất cả thể loại</option>
+                    {% for category in categories %}
+                        <option value="{% url 'comic_list' %}?category={{ category.slug }}"
+                            {% if selected_category == category.slug %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                 {% endfor %}
+                </select>
+            </div>
+
+            <div class="search-box">
+                <form method="GET" action="{% url 'comic_list' %}">
+                    <input type="text" name="search" value="{{ search_query|default:'' }}" placeholder="Tìm kiếm truyện...">
+                    <button type="submit">Tìm kiếm</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="results-count">
+            Tìm thấy {{ comics.count }} truyện
+        </div>
+    </div>
+
+    <!-- Comics Grid -->
+    {% if comics %}
+        <div class="comics-grid">
+            {% for comic in comics %}
+                <a href="{% url 'comic_detail' comic.id %}" class="comic-card">
+                    <div class="comic-cover">
+                        {% if comic.cover_image %}
+                            <img src="{{ comic.cover_image.url }}" alt="{{ comic.title }}">
+                        {% else %}
+                            <div class="cover-placeholder">{{ comic.title|slice:":2" }}</div>
+                        {% endif %}
+                        
+                        <div class="status-badge">
+                            {% if comic.status == 'ongoing' %}Đang ra{% endif %}
+                            {% if comic.status == 'completed' %}Hoàn thành{% endif %}
+                        </div>
+                    </div>
+                    <div class="comic-info">
+                        <div class="comic-title">{{ comic.title }}</div>
+                        <div class="comic-meta">
+                            <span>
+                                {% if comic.chapters.last %}
+                                    Ch. {{ comic.chapters.last.chapter_number }}
+                                {% else %}
+                                    Chưa có chương
+                                {% endif %}
+                            </span>
+                            <span>{{ comic.views }} lượt</span>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-results">
+            <h3>Không tìm thấy truyện nào</h3>
+            <p>Hãy thử tìm kiếm với từ khóa khác hoặc thể loại khác.</p>
+        </div>
+    {% endif %}
+</div>
+
+<script src="{% static 'core/js/comic_list.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,11 @@
+# Môi trường ảo
+env/
+venv/
+
+# Thư mục cache của Python
+__pycache__/
+*.pyc
+
+# Cấu hình của các IDE
+.idea/
+.vscode/

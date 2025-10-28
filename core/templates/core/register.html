@@ -1,0 +1,66 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Đăng ký - MangaHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin: 50px auto; padding: 0 20px;">
+    <div class="register-form" style="
+        background: #1a1a1a;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    ">
+        <h2 style="text-align: center; margin-bottom: 30px; color: #ff6b6b;">Đăng ký tài khoản</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for field in form %}
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; color: #f0f0f0;">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div style="color: #ff6b6b; font-size: 14px; margin-top: 5px;">
+                            {{ field.errors }}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" style="
+                width: 100%;
+                background: #ff6b6b;
+                border: none;
+                color: white;
+                padding: 12px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 20px;
+            ">Đăng ký</button>
+        </form>
+        
+        <p style="text-align: center; margin-top: 20px; color: #aaa;">
+            Đã có tài khoản? <a href="{% url 'login_view' %}" style="color: #ff6b6b;">Đăng nhập ngay</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="email"], input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        background: #2a2a2a;
+        border: 1px solid #444;
+        border-radius: 5px;
+        color: #f0f0f0;
+        font-size: 16px;
+    }
+    
+    input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+        outline: none;
+        border-color: #ff6b6b;
+    }
+</style>
+{% endblock %}

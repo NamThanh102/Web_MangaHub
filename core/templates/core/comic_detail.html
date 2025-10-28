@@ -1,0 +1,688 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block title %}{{ comic.title }} - MangaHub{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/css/comic_detail.css' %}">
+<style>
+    /* Comic Detail Styles */
+.comic-detail-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.breadcrumb {
+    margin-bottom: 20px;
+    font-size: 14px;
+    color: #666;
+}
+
+.breadcrumb a {
+    color: #4ecdc4;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* Main Comic Card */
+.comic-detail-card {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 30px;
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.comic-cover-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comic-cover {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cover-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.cover-placeholder {
+    width: 100%;
+    height: 400px;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.cover-placeholder.small {
+    height: 200px;
+    font-size: 24px;
+}
+
+.cover-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.favorite-form {
+    margin: 0;
+}
+
+.favorite-btn {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ff6b6b;
+    background: white;
+    color: #ff6b6b;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.favorite-btn:hover {
+    background: #fff5f5;
+}
+
+.favorite-btn.favorited {
+    background: #ff6b6b;
+    color: white;
+}
+
+.heart-icon {
+    font-size: 16px;
+}
+
+.read-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.read-btn {
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.read-btn.primary {
+    background: #4ecdc4;
+    color: white;
+}
+
+.read-btn.primary:hover {
+    background: #3dbeb6;
+    transform: translateY(-2px);
+}
+
+.read-btn.secondary {
+    background: #ffd166;
+    color: #333;
+}
+
+.read-btn.secondary:hover {
+    background: #ffc745;
+    transform: translateY(-2px);
+}
+
+/* Comic Info Section */
+.comic-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comic-title {
+    font-size: 32px;
+    color: #292f3d;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.comic-author {
+    font-size: 18px;
+    color: #666;
+    margin: 0;
+}
+
+.comic-stats {
+    display: flex;
+    gap: 30px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: #666;
+    font-weight: 500;
+}
+
+.stat-value {
+    font-size: 16px;
+    font-weight: 600;
+    color: #292f3d;
+}
+
+.status-ongoing {
+    color: #4ecdc4;
+}
+
+.status-completed {
+    color: #06d6a0;
+}
+
+.status-hiatus {
+    color: #ffd166;
+}
+
+.comic-description h3,
+.comic-tags h3 {
+    margin: 0 0 10px 0;
+    color: #292f3d;
+    font-size: 20px;
+}
+
+.comic-description p {
+    line-height: 1.6;
+    color: #555;
+    margin: 0;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    padding: 6px 12px;
+    background: #e9ecef;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #495057;
+}
+
+/* Chapters Section */
+.chapters-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.section-header h2 {
+    margin: 0;
+    color: #292f3d;
+    font-size: 24px;
+}
+
+.chapter-count {
+    color: #666;
+    font-size: 14px;
+}
+
+.chapters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.chapter-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.chapter-item:hover {
+    background: #e9ecef;
+    transform: translateX(5px);
+}
+
+.chapter-item.last-read {
+    border-left: 4px solid #4ecdc4;
+    background: #f0f9f8;
+}
+
+.chapter-info {
+    flex: 1;
+}
+
+.chapter-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.chapter-number {
+    font-weight: 600;
+    color: #292f3d;
+}
+
+.chapter-title {
+    color: #666;
+}
+
+.chapter-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+    color: #8a8f9d;
+}
+
+.upload-time,
+.view-count {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.read-chapter-btn {
+    padding: 8px 16px;
+    background: #4ecdc4;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.read-chapter-btn:hover {
+    background: #3dbeb6;
+    transform: translateY(-2px);
+}
+
+.no-chapters {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.page-link {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #4ecdc4;
+    transition: all 0.3s ease;
+}
+
+.page-link:hover {
+    background: #f8f9fa;
+    border-color: #4ecdc4;
+}
+
+.page-link.current {
+    background: #4ecdc4;
+    color: white;
+    border-color: #4ecdc4;
+}
+
+/* Related Comics */
+.related-section {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.related-section h2 {
+    margin: 0 0 20px 0;
+    color: #292f3d;
+    font-size: 24px;
+}
+
+.related-comics {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+}
+
+.related-comic a {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.related-cover {
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.related-cover img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.related-comic h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #292f3d;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .comic-detail-card {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .comic-stats {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .chapter-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .chapter-actions {
+        align-self: flex-end;
+    }
+    
+    .related-comics {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    }
+}
+</style>
+<div class="comic-detail-container">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="{% url 'home' %}">Trang chủ</a> &gt;
+        <a href="{% url 'comic_list' %}">Truyện tranh</a> &gt;
+        <span>{{ comic.title }}</span>
+    </div>
+
+    <!-- Main Comic Info -->
+    <div class="comic-detail-card">
+        <div class="comic-cover-section">
+            <div class="comic-cover">
+                {% if comic.cover_image %}
+                    <img src="{{ comic.cover_image.url }}" alt="{{ comic.title }}" class="cover-image">
+                {% else %}
+                    <div class="cover-placeholder">
+                        <span>{{ comic.title|slice:":2" }}</span>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="cover-actions">
+                {% if user.is_authenticated %}
+                    <form method="post" action="{% url 'toggle_favorite' comic.id %}" class="favorite-form">
+                        {% csrf_token %}
+                        <button type="submit" class="favorite-btn {% if is_favorite %}favorited{% endif %}">
+                            <span class="heart-icon">❤</span>
+                            {% if is_favorite %}Bỏ yêu thích{% else %}Thêm yêu thích{% endif %}
+                        </button>
+                    </form>
+                {% endif %}
+                
+                {% if comic.chapters.first %}
+                    <div class="read-actions">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'read_chapter' comic.chapters.first.id %}" class="btn read-btn primary">
+                                Đọc từ đầu
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login_view' %}?next={% url 'read_chapter' comic.chapters.first.id %}" class="btn read-btn primary">
+                                Đọc từ đầu
+                            </a>
+                        {% endif %}
+                        
+                        {% if latest_read_chapter %}
+                            <a href="{% url 'read_chapter' latest_read_chapter.id %}" class="btn read-btn secondary">
+                                Đọc tiếp
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="comic-info-section">
+            <h1 class="comic-title">{{ comic.title }}</h1>
+            <p class="comic-author">Tác giả: {{ comic.author }}</p>
+            
+            <div class="comic-stats">
+                <div class="stat-item">
+                    <span class="stat-label">Trạng thái:</span>
+                    <span class="stat-value status-{{ comic.status }}">
+                        {% if comic.status == 'ongoing' %}Đang tiến hành
+                        {% elif comic.status == 'completed' %}Đã hoàn thành
+                        {% elif comic.status == 'hiatus' %}Tạm ngưng
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lượt xem:</span>
+                    <span class="stat-value">{{ comic.views|default:0 }}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lượt thích:</span>
+                    <span class="stat-value">{{ comic.favorite_count|default:0 }}</span>
+                </div>
+            </div>
+
+            <div class="comic-description">
+                <h3>Nội dung</h3>
+                <p>{{ comic.description|default:"Đang cập nhật..." }}</p>
+            </div>
+
+            {% if comic.tags.all %}
+            <div class="comic-tags">
+                <h3>Thể loại</h3>
+                <div class="tags-list">
+                    {% for tag in comic.tags.all %}
+                        <span class="tag">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Chapters Section -->
+    <div class="chapters-section">
+        <div class="section-header">
+            <h2>Danh sách chương</h2>
+            <div class="chapter-count">{{ chapters|length }} chương</div>
+        </div>
+
+        <div class="chapters-list">
+            {% for chapter in chapters %}
+                <div class="chapter-item {% if chapter.id == latest_read_chapter.id %}last-read{% endif %}">
+                    <div class="chapter-info">
+                        <a href="{% url 'read_chapter' chapter.id %}" class="chapter-link">
+                            <span class="chapter-number">Chương {{ chapter.chapter_number }}</span>
+                            {% if chapter.title %}
+                                <span class="chapter-title">: {{ chapter.title }}</span>
+                            {% endif %}
+                        </a>
+                        <div class="chapter-meta">
+                            <span class="upload-time">{{ chapter.created_at|date:"d/m/Y" }}</span>
+                            <span class="view-count">{{ chapter.views }} lượt xem</span>
+                        </div>
+                    </div>
+                    <div class="chapter-actions">
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'read_chapter' chapter.id %}" class="btn read-chapter-btn">
+                                Đọc
+                            </a>
+                        {% else %}
+                            <a href="{% url 'login_view' %}?next={% url 'read_chapter' chapter.id %}" class="btn read-chapter-btn">
+                                Đọc
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-chapters">
+                    <p>Chưa có chương nào được đăng.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if chapters.has_other_pages %}
+        <div class="pagination">
+            {% if chapters.has_previous %}
+                <a href="?page={{ chapters.previous_page_number }}" class="page-link">← Trước</a>
+            {% endif %}
+
+            {% for num in chapters.paginator.page_range %}
+                {% if chapters.number == num %}
+                    <span class="page-link current">{{ num }}</span>
+                {% else %}
+                    <a href="?page={{ num }}" class="page-link">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if chapters.has_next %}
+                <a href="?page={{ chapters.next_page_number }}" class="page-link">Sau →</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Related Comics -->
+    {% if related_comics %}
+    <div class="related-section">
+        <h2>Truyện liên quan</h2>
+        <div class="related-comics">
+            {% for related in related_comics %}
+                <div class="related-comic">
+                    <a href="{% url 'comic_detail' related.id %}">
+                        <div class="related-cover">
+                            {% if related.cover_image %}
+                                <img src="{{ related.cover_image.url }}" alt="{{ related.title }}">
+                            {% else %}
+                                <div class="cover-placeholder small">
+                                    <span>{{ related.title|slice:":2" }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h4>{{ related.title }}</h4>
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/js/comic_detail.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Xử lý nút yêu thích
+    const favoriteForms = document.querySelectorAll('.favorite-form');
+    favoriteForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const form = this;
+            const button = form.querySelector('.favorite-btn');
+            
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new FormData(form)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    button.classList.add('favorited');
+                    button.innerHTML = '<span class="heart-icon">❤</span> Bỏ yêu thích';
+                } else if (data.status === 'removed') {
+                    button.classList.remove('favorited');
+                    button.innerHTML = '<span class="heart-icon">❤</span> Thêm yêu thích';
+                }
+                
+                // Cập nhật số lượng yêu thích
+                const favoriteCount = document.querySelector('.comic-stats .stat-value:nth-child(3)');
+                if (favoriteCount && data.favorite_count !== undefined) {
+                    favoriteCount.textContent = data.favorite_count;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Fallback: submit form bình thường
+                form.submit();
+            });
+        });
+    });
+
+    // Đánh dấu chương đã đọc
+    const readButtons = document.querySelectorAll('.read-chapter-btn, .read-btn');
+    readButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Có thể thêm tracking ở đây
+            localStorage.setItem('lastReadChapter', this.href);
+        });
+    });
+});
+</script>
+{% endblock %}

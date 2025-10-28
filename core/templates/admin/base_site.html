@@ -1,0 +1,479 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}MangaHub Admin{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    :root {
+        --primary: #ff6b6b;
+        --primary-dark: #ff5252;
+        --primary-light: #ffb3b3;
+        --bg-dark: #121212;
+        --bg-card: rgba(26, 26, 26, 0.95);
+        --bg-card-light: rgba(35, 35, 35, 0.9);
+        --text-primary: #f0f0f0;
+        --text-secondary: #b0b0b0;
+        --border-color: rgba(255, 107, 107, 0.3);
+        --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        --gradient: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    }
+
+    /* Base styles matching main site */
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+        font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+        background-image: url("{% static 'core/images/a3.jpg' %}");
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+        line-height: 1.6;
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Background overlay matching main site */
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, 
+            rgba(18, 18, 18, 0.8) 0%, 
+            rgba(26, 26, 26, 0.7) 50%, 
+            rgba(18, 18, 18, 0.8) 100%);
+        z-index: -1;
+    }
+
+    body::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url('{% static "core/images/a3.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        z-index: -2;
+        opacity: 0.5;
+        filter: brightness(0.7);
+    }
+
+    /* Header matching main site design */
+    #header {
+        background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(40, 40, 40, 0.95));
+        backdrop-filter: blur(20px);
+        padding: 15px 30px;
+        border-bottom: 2px solid var(--border-color);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    #header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gradient);
+    }
+
+    #branding h1 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    #branding h1 a {
+        color: var(--primary) !important;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #branding h1 a::before {
+        content: '🎭';
+        font-size: 1.5rem;
+    }
+
+    #branding h1 a:hover {
+        transform: translateY(-1px);
+        text-shadow: 0 4px 8px rgba(255, 107, 107, 0.3);
+    }
+
+    /* Main content area */
+    #content {
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 40px;
+        box-shadow: var(--shadow);
+        margin: 30px;
+        border: 1px solid var(--border-color);
+        backdrop-filter: blur(15px);
+        position: relative;
+        overflow: hidden;
+    }
+
+    #content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--gradient);
+    }
+
+    /* Modules and tables */
+    .module {
+        background: var(--bg-card-light);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        margin-bottom: 20px;
+    }
+
+    .module:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+
+    .module h2 {
+        background: var(--gradient);
+        color: white;
+        padding: 16px 20px;
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .module h2::before {
+        content: '📖';
+        font-size: 0.9em;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: transparent;
+    }
+
+    th {
+        background: rgba(40, 40, 40, 0.8);
+        color: var(--primary-light);
+        padding: 16px 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    td {
+        padding: 14px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        color: var(--text-primary);
+        transition: background 0.2s ease;
+    }
+
+    tr:hover td {
+        background: rgba(255, 107, 107, 0.05);
+    }
+
+    /* Buttons matching main site */
+    .button, input[type=submit], button, .submit-row input {
+        background: var(--gradient);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.85rem;
+        box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+
+    .button:hover, input[type=submit]:hover, button:hover, .submit-row input:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+    }
+
+    .button:active, input[type=submit]:active, button:active {
+        transform: translateY(0);
+    }
+
+    /* Footer matching main site */
+    #footer {
+        background: linear-gradient(135deg, rgba(26, 26, 26, 0.98), rgba(40, 40, 40, 0.95));
+        backdrop-filter: blur(20px);
+        border-top: 2px solid var(--border-color);
+        padding: 25px;
+        color: var(--text-secondary);
+        text-align: center;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #footer::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: var(--gradient);
+    }
+
+    /* Login page - matching main site auth design */
+    .login #container {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 50px 40px;
+        border: 1px solid var(--border-color);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(15px);
+        max-width: 400px;
+        margin: 50px auto;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login #container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient);
+        border-radius: 20px 20px 0 0;
+    }
+
+    .login #content {
+        padding: 0;
+        margin: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .login h1 {
+        color: transparent;
+        background: var(--gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-align: center;
+        font-size: 2.2rem;
+        margin-bottom: 30px;
+        font-weight: 700;
+    }
+
+    .login .form-row {
+        margin-bottom: 20px;
+    }
+
+    .login input[type=text],
+    .login input[type=password] {
+        background: rgba(30, 30, 30, 0.9);
+        color: var(--text-primary);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 14px 16px;
+        width: 100%;
+        margin-bottom: 0;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .login input[type=text]:focus,
+    .login input[type=password]:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+        background: rgba(35, 35, 35, 0.95);
+    }
+
+    /* Breadcrumbs matching main site navigation */
+    .breadcrumbs {
+        background: var(--bg-card-light) !important;
+        border-radius: 10px;
+        padding: 12px 20px;
+        margin-bottom: 25px;
+        border: 1px solid rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    /* Form elements matching main site */
+    select, input[type=text], input[type=email], input[type=url], input[type=password], textarea {
+        background: rgba(30, 30, 30, 0.9);
+        color: var(--text-primary);
+        border: 2px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 10px 12px;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    select:focus, input[type=text]:focus, input[type=email]:focus, input[type=url]:focus, input[type=password]:focus, textarea:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.2);
+        background: rgba(35, 35, 35, 0.95);
+    }
+
+    /* Dashboard specific styles */
+    .dashboard #content {
+        padding: 30px;
+    }
+
+    .dashboard .module table {
+        margin: 0;
+    }
+
+    /* Action buttons */
+    .actions {
+        background: var(--bg-card-light) !important;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* Messages/alerts matching main site */
+    .messagelist li {
+        background: var(--bg-card-light);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+        #content {
+            margin: 15px;
+            padding: 25px;
+        }
+        
+        #header {
+            padding: 10px 15px;
+        }
+        
+        .login #container {
+            margin: 20px;
+            padding: 30px 25px;
+        }
+        
+        .module h2 {
+            padding: 12px 15px;
+            font-size: 1rem;
+        }
+    }
+
+    /* Additional admin-specific elements */
+    #user-tools {
+        color: var(--text-secondary);
+    }
+
+    #user-tools a {
+        color: var(--primary-light) !important;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    #user-tools a:hover {
+        color: var(--primary) !important;
+    }
+
+    .selector h2 {
+        background: var(--bg-card-light);
+        color: var(--text-primary);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    /* Calendar and time pickers */
+    .calendarbox, .clockbox {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+    }
+
+    .calendar caption, .calendarbox h2 {
+        background: var(--gradient);
+        color: white;
+    }
+
+    .calendar td a {
+        background: var(--bg-card-light);
+        color: var(--text-primary);
+    }
+
+    .calendar td a:hover {
+        background: var(--primary);
+        color: white;
+    }
+    .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #ff6b6b;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo_img {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+</style>
+{% endblock %}
+
+{% block branding %}
+    <a href="{/admin/}" class="logo">
+        <img src="{% static 'core/images/a1.jpg' %}" class="logo_img" alt="MangaHub"/>
+        <span class="logo-text">MangaHub</span>
+    </a>
+{% endblock %}
+
+{% block footer %}
+<div id="footer">
+    © 2025 MangaHub Admin — Đồng bộ với giao diện chính
+</div>
+{% endblock %}

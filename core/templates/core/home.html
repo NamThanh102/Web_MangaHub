@@ -1,0 +1,396 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+
+<!-- Hero Section -->
+{% load static %}
+
+<section class="hero">
+    <!-- Slideshow container -->
+    <div class="hero-slideshow">
+        <div class="slide slide1"></div>
+        <div class="slide slide2"></div>
+        <div class="slide slide3"></div>
+        <div class="slide slide4"></div>
+    </div>
+    <!-- Overlay để làm tối ảnh nền -->
+    <div class="hero-overlay"></div>
+    
+    <!-- Nội dung hero -->
+    <div class="hero-content">
+        <h1>Khám phá thế giới truyện tranh</h1>
+        <p>Hàng ngàn bộ truyện tranh đa dạng thể loại đang chờ bạn khám phá. Đọc miễn phí mọi lúc, mọi nơi!</p>
+        <a href="{% url 'comic_list' %}" class="cta-button">Bắt đầu đọc ngay</a>
+    </div>
+    
+    <!-- Navigation dots -->
+    <div class="slide-dots">
+        <span class="dot active" data-slide="0"></span>
+        <span class="dot" data-slide="1"></span>
+        <span class="dot" data-slide="2"></span>
+        <span class="dot" data-slide="3"></span>
+    </div>
+</section>
+
+<style>
+.slide1 { background-image: url("/static/core/images/a3.jpg"); }
+.slide2 { background-image: url("/static/core/images/a4.jpg"); }
+.slide3 { background-image: url("/static/core/images/a5.jpg"); }
+.slide4 { background-image: url("/static/core/images/a6.jpg"); }
+
+.hero {
+    position: relative;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    overflow: hidden;
+}
+
+.hero-slideshow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Các slide */
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 1.0s ease-in-out;
+    /* transform: scale(1.1);*/
+}
+
+.slide.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Overlay để làm tối ảnh nền */
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg, 
+        rgba(0, 0, 0, 0.7) 0%, 
+        rgba(0, 0, 0, 0.5) 50%, 
+        rgba(0, 0, 0, 0.7) 100%
+    );
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 3;
+    max-width: 800px;
+    animation: fadeInUp 1s ease-out;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    color: #ff6b6b;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 1s ease-out 0.3s both;
+}
+
+.hero p {
+    margin: 0 auto;
+    font-size: 1.3rem;
+    max-width: 600px;
+    margin-bottom: 30px;
+    color: #f0f0f0;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    line-height: 1.6;
+    animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 15px 35px;
+    background: linear-gradient(45deg, #ff6b6b, #ff8e8e);
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+    animation: fadeInUp 1s ease-out 0.9s both;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+    background: linear-gradient(45deg, #ff5252, #ff6b6b);
+}
+
+.cta-button:hover::before {
+    left: 100%;
+}
+
+
+.slide-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 3;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: #ff6b6b;
+    transform: scale(1.2);
+}
+
+.dot:hover {
+    background: rgba(255, 107, 107, 0.8);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero {
+        height: 400px;
+        padding: 0 15px;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .cta-button {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        height: 350px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .slide-dots {
+        bottom: 15px;
+    }
+    
+    .dot {
+        width: 10px;
+        height: 10px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    let currentSlide = 0;
+    let slideInterval;
+    const slideDuration = 5000;
+    function showSlide(n) {
+        slides.forEach(slide => {
+            slide.classList.remove('active');
+        });
+        dots.forEach(dot => {
+            dot.classList.remove('active');
+        });
+        currentSlide = (n + slides.length) % slides.length;
+        slides[currentSlide].classList.add('active');
+        dots[currentSlide].classList.add('active');
+    }
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+    function startSlideShow() {
+        slideInterval = setInterval(nextSlide, slideDuration);
+    }
+    function stopSlideShow() {
+        clearInterval(slideInterval);
+    }
+
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', function() {
+            stopSlideShow();
+            showSlide(index);
+            startSlideShow();
+        });
+
+        dot.addEventListener('mouseenter', function() {
+            stopSlideShow();
+        });
+        
+        dot.addEventListener('mouseleave', function() {
+            startSlideShow();
+        });
+    });
+
+    // // Tạm dừng slideshow khi hover vào hero section
+    // const hero = document.querySelector('.hero');
+    // hero.addEventListener('mouseenter', stopSlideShow);
+    // hero.addEventListener('mouseleave', startSlideShow);
+    showSlide(0);
+    startSlideShow();
+    function preloadImages() {
+        const imageUrls = [
+            "{% static 'core/images/hero-bg1.jpg' %}",
+            "{% static 'core/images/hero-bg2.jpg' %}",
+            "{% static 'core/images/hero-bg3.jpg' %}",
+            "{% static 'core/images/hero-bg4.jpg' %}"
+        ];
+        
+        imageUrls.forEach(url => {
+            const img = new Image();
+            img.src = url;
+        });
+    }
+    
+    preloadImages();
+});
+</script>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Thể loại -->
+    <h2 class="section-title">Thể loại</h2>
+    <div class="categories">
+        <div class="category active">Tất cả</div>
+        {% for category in categories %}
+            <div class="category">{{ category.name }}</div>
+        {% endfor %}
+    </div>
+
+    <!-- Truyện mới cập nhật -->
+    <h2 class="section-title">Truyện mới cập nhật</h2>
+    <div class="comics-grid">
+        {% for comic in comics %}
+            <a class="comic-card" href="{% url 'comic_detail' comic.id %}">
+                <div class="comic-cover">
+                    {% if comic.cover_image %}
+                        <img src="{{ comic.cover_image.url }}" alt="{{ comic.title }}">
+                    {% else %}
+                        <div class="placeholder">{{ comic.title|slice:":2" }}</div>
+                    {% endif %}
+                    <div class="status-badge">
+                        {% if comic.status == 'ongoing' %}Đang ra{% endif %}
+                        {% if comic.status == 'completed' %}Hoàn thành{% endif %}
+                    </div>
+                </div>
+                <div class="comic-info">
+                    <div class="comic-title">{{ comic.title }}</div>
+                    <div class="comic-meta">
+                        <span>
+                            {% if comic.chapters.last %}
+                                Ch. {{ comic.chapters.last.chapter_number }}
+                            {% else %}
+                                Chưa có chương
+                            {% endif %}
+                        </span>
+                        <span>{{ comic.updated_at|timesince }} trước</span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- Truyện đề xuất -->
+    <h2 class="section-title">Đề xuất cho bạn</h2>
+    <div class="comics-grid">
+        {% for comic in popular_comics %}
+            <a class="comic-card" href="{% url 'comic_detail' comic.id %}">
+                <div class="comic-cover">
+                    {% if comic.cover_image %}
+                        <img src="{{ comic.cover_image.url }}" alt="{{ comic.title }}">
+                    {% else %}
+                        <div class="placeholder">{{ comic.title|slice:":2" }}</div>
+                    {% endif %}
+                    <div class="status-badge">
+                        {% if comic.status == 'ongoing' %}Đang ra{% endif %}
+                        {% if comic.status == 'completed' %}Hoàn thành{% endif %}
+                    </div>
+                </div>
+                <div class="comic-info">
+                    <div class="comic-title">{{ comic.title }}</div>
+                    <div class="comic-meta">
+                        <span>
+                            {% if comic.chapters.last %}
+                                Ch. {{ comic.chapters.last.chapter_number }}
+                            {% else %}
+                                Chưa có chương
+                            {% endif %}
+                        </span>
+                        <span>{{ comic.views }} lượt xem</span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'core/js/home.js' %}"></script>
+{% endblock %}
