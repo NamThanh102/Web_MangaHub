@@ -1,11 +1,16 @@
+# tạo môi trường ảo env
+python -m venv env
+env\Scripts\activate
 
-db dùng mysql anh em có thể tải thay thổi trong file setting là được.
+# tải lib cần dùng
+pip install -r requirements.txt
 
-clone về dùng vscode đã cài django frw
-
-dùng teminal các lệnh:
+# check settings.py rồi vào mysql workbench chỉnh rồi chạy các lệnh:
 python manage.py makemigrations
 python manage.py migrate
+python manage.py createsuperuser
+
+#RUN
 python manage.py runserver
 
 
