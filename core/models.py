@@ -153,29 +153,3 @@ class Favorite(models.Model):
     
     def __str__(self):
         return f"{self.user.username} - {self.comic.title}"
-
-# Model cho đánh giá (thêm tính năng mới)
-class Review(models.Model):
-    RATING_CHOICES = [
-        (1, '1 Sao'),
-        (2, '2 Sao'),
-        (3, '3 Sao'),
-        (4, '4 Sao'),
-        (5, '5 Sao'),
-    ]
-    
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews', verbose_name="Người dùng")
-    comic = models.ForeignKey(Comic, on_delete=models.CASCADE, related_name='reviews', verbose_name="Truyện")
-    rating = models.PositiveSmallIntegerField(choices=RATING_CHOICES, verbose_name="Đánh giá")
-    comment = models.TextField(blank=True, verbose_name="Bình luận")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    
-    class Meta:
-        verbose_name = "Đánh giá"
-        verbose_name_plural = "Đánh giá"
-        unique_together = ['user', 'comic']
-        ordering = ['-created_at']
-    
-    def __str__(self):
-        return f"{self.user.username} - {self.comic.title} - {self.rating} sao"

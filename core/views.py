@@ -2,7 +2,6 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from django.db.models import Q
 from django.db import connection
 from django.utils import timezone
 from django.http import JsonResponse
@@ -11,6 +10,7 @@ from .models import Comic, Chapter, Category, ReadingHistory, Favorite
 from .forms import UserRegistrationForm
 from django.contrib.auth import authenticate, login as auth_login
 import logging
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
@@ -24,9 +24,6 @@ def home(request):
         'popular_comics': popular_comics
     }
     return render(request, 'core/home.html', context)
-
-from django.db.models import Q
-from .models import Comic, Category
 
 def comic_list(request):
     category_slug = request.GET.get('category')
@@ -176,17 +173,7 @@ def login_view(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
-
-        try:
-            us = User.objects.get(username=username)
-        except User.DoesNotExist:
-            us = None
-
-        if not us.is_active:
-            messages.error(request, 'Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.')
-            return render(request, 'core/login.html')
-        
+        user = authenticate(request, username=username, password=password)    
         if user is not None:
             auth_login(request, user)
             if user.is_superuser or user.is_staff:

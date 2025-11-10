@@ -18,7 +18,6 @@ urlpatterns = [
 
     # Comic URLs
     path('comic/<int:comic_id>/', views.comic_detail, name='comic_detail'),
-    path('comic/<int:comic_id>/read/', views.read, name='read'),
     path('chapter/<int:chapter_id>/', views.read_chapter, name='read_chapter'),
     path('toggle_favorite/<int:comic_id>/', views.toggle_favorite, name='toggle_favorite'),
     path('favorites/', views.favorites, name='favorites'),

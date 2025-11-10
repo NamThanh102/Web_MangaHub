@@ -166,15 +166,26 @@
     .chapter-content {
         min-height: 500px;
     }
+
     .images-content {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        gap: 0;
     }
+
     .chapter-page {
+        margin: 0;
+        padding: 0;
+    }
+
+    .page-image img {
+        display: block;
         width: 100%;
-        text-align: center;
+        margin: 0;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
     }
     .page-header {
         margin-bottom: 10px;
@@ -183,12 +194,6 @@
     }
     .page-image {
         max-width: 100%;
-    }
-    .page-image img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     .no-content {
         text-align: center;
