@@ -1,18 +1,20 @@
-from django.conf import settings
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.auth import views as auth_views
 from . import views
-from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('', views.home, name='home'),
+
     path('comics/', views.comic_list, name='comic_list'),
+
     path('register/', views.register, name='register'),
     path('login/', views.login_view, name='login_view'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     
     # User URLs
-    path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
     path('about/', views.about, name='about'),  
 
