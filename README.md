@@ -1,3 +1,4 @@
+123456
 # tạo môi trường ảo env
 python -m venv env
 env\Scripts\activate
